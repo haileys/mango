@@ -5,17 +5,14 @@ import Mango.Value
 import Control.Monad
 import Text.ParserCombinators.Parsec
 
-comment :: Parser ()
 comment = do
     char ';'
     manyTill anyChar (void (char '\n') <|> (lookAhead eof))
-    return ()
 
-whitespace :: Parser ()
-whitespace = void $ many1 space
+whitespace = many1 $ oneOf " \t\f\v\n\r"
 
 ignored :: Parser ()
-ignored = optional $ whitespace <|> comment
+ignored = void $ many $ whitespace <|> comment
 
 readSymbol :: Parser MangoValue
 readSymbol = do
@@ -60,3 +57,5 @@ readProgram = do
     return exprs
 
 read = parse readProgram
+
+readFile file = Mango.Reader.read file `liftM` Prelude.readFile file
