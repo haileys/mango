@@ -44,9 +44,32 @@ readQuote = do
     expr <- readExpr
     return $ MangoQuote expr
 
+escapedStringChar = do
+    char '\\'
+    c <- anyToken
+    return $ case c of
+        'b'         -> '\b'
+        'n'         -> '\n'
+        'f'         -> '\f'
+        'v'         -> '\v'
+        'r'         -> '\r'
+        't'         -> '\t'
+        _           -> c
+
+stringChar = do
+    escapedStringChar <|> satisfy ('"' /=)
+
+readString :: Parser MangoValue
+readString = do
+    char '"'
+    str <- many stringChar
+    char '"'
+    ignored
+    return $ MangoString str
+
 readExpr :: Parser MangoValue
 readExpr = do
-    expr <- readSymbol <|> readNumber <|> readSexp <|> readQuote
+    expr <- readSymbol <|> readNumber <|> readSexp <|> readQuote <|> readString
     ignored
     return expr
 

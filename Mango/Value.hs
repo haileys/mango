@@ -9,6 +9,7 @@ data Scope
 data MangoValue = MangoList     [MangoValue]
                 | MangoNumber   Double
                 | MangoSymbol   String
+                | MangoString   String
                 | MangoFunction ([MangoValue] -> IO MangoValue)
                 | MangoSpecial  (Scope -> [MangoValue] -> IO MangoValue)
                 | MangoQuote    MangoValue
@@ -18,6 +19,7 @@ instance Show MangoValue where
     show (MangoList     xs)     = "(" ++ unwords (map show xs) ++ ")"
     show (MangoNumber   num)    = show num
     show (MangoSymbol   sym)    = sym
+    show (MangoString   str)    = show str
     show (MangoFunction fun)    = "<function>"
     show (MangoSpecial  spec)   = "<special>"
     show (MangoQuote    val)    = '\'' : show val

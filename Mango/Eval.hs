@@ -19,6 +19,7 @@ eval ctx (MangoList     [])     = return $ MangoList []
 eval ctx (MangoList     (x:xs)) = backtraceFrame ("application of " ++ show x) $ eval ctx x >>= apply ctx xs
 eval ctx (MangoNumber   num)    = return $ MangoNumber num
 eval ctx (MangoSymbol   sym)    = getVar sym ctx
+eval ctx (MangoString   str)    = return $ MangoString str
 eval ctx (MangoFunction fn)     = return $ MangoFunction fn
 eval ctx (MangoSpecial  spec)   = return $ MangoSpecial spec
 eval ctx (MangoQuote    val)    = return val
