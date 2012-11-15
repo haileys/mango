@@ -12,6 +12,7 @@ data MangoValue = MangoList     [MangoValue]
                 | MangoFunction ([MangoValue] -> IO MangoValue)
                 | MangoSpecial  (Scope -> [MangoValue] -> IO MangoValue)
                 | MangoQuote    MangoValue
+                | MangoTrue
 
 instance Show MangoValue where
     show (MangoList     xs)     = "(" ++ unwords (map show xs) ++ ")"
@@ -20,6 +21,7 @@ instance Show MangoValue where
     show (MangoFunction fun)    = "<function>"
     show (MangoSpecial  spec)   = "<special>"
     show (MangoQuote    val)    = '\'' : show val
+    show MangoTrue              = "#t"
 
 hasVar :: String -> Scope -> IO Bool
 hasVar name RootScope           = return False

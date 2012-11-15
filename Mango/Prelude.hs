@@ -86,6 +86,7 @@ initPrelude = do
     insert "set"    (MangoSpecial   set)        globals
     insert "eval"   (MangoSpecial   _eval)      globals
     insert "if"     (MangoSpecial   _if)        globals
+    insert "#t"     MangoTrue                   globals
     
     insert "+"      (mkMathFunction (+))        globals
     insert "-"      (mkMathFunction (-))        globals

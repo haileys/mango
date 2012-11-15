@@ -24,3 +24,4 @@ eval ctx (MangoSymbol   sym)    = getVar sym ctx
 eval ctx (MangoFunction fn)     = return $ MangoFunction fn
 eval ctx (MangoSpecial  spec)   = return $ MangoSpecial spec
 eval ctx (MangoQuote    val)    = return val
+eval ctx MangoTrue              = return MangoTrue
