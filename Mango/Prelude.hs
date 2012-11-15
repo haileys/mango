@@ -62,9 +62,7 @@ _if :: Scope -> [MangoValue] -> IO MangoValue
 _if ctx argv = do
     (cond,t,f)      <- expectArgs3 argv
     evaluatedCond   <- eval ctx cond
-    case evaluatedCond of
-        MangoList []    -> eval ctx f
-        _               -> eval ctx t
+    eval ctx $ if isTruthy evaluatedCond then t else f
 
 mkMathFunction :: (Double -> Double -> Double) -> MangoValue
 mkMathFunction op = MangoFunction $ \argv -> do

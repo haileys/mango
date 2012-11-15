@@ -46,3 +46,7 @@ setVar name val (Scope parent vars) = do
     case exists of
         True ->     setVar name val parent
         False ->    M.insert name val vars
+
+isTruthy :: MangoValue -> Bool
+isTruthy (MangoList []) = False
+isTruthy _              = True
