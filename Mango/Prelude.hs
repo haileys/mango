@@ -65,6 +65,11 @@ _if ctx argv = do
     evaluatedCond   <- eval ctx cond
     eval ctx $ if isTruthy evaluatedCond then t else f
 
+_print :: [MangoValue] -> IO MangoValue
+_print argv = do
+    mapM print argv
+    return $ MangoTrue
+
 mkMathFunction :: (Double -> Double -> Double) -> MangoValue
 mkMathFunction op = MangoFunction $ \argv -> do
     (av, bv)    <- expectArgs2 argv
@@ -86,6 +91,7 @@ initPrelude = do
     insert "eval"   (MangoSpecial   _eval)      globals
     insert "if"     (MangoSpecial   _if)        globals
     insert "#t"     MangoTrue                   globals
+    insert "print"  (MangoFunction  _print)     globals
     
     insert "+"      (mkMathFunction (+))        globals
     insert "-"      (mkMathFunction (-))        globals
