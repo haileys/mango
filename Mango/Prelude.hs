@@ -67,7 +67,10 @@ _if ctx argv = do
 
 _print :: [MangoValue] -> IO MangoValue
 _print argv = do
-    mapM print argv
+    (flip mapM) argv $ \val ->
+        case val of
+            MangoString str -> putStrLn str
+            _               -> print val
     return $ MangoTrue
 
 mkMathFunction :: (Double -> Double -> Double) -> MangoValue
