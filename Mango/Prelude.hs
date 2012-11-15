@@ -58,6 +58,14 @@ set ctx argv = do
 _eval :: Scope -> [MangoValue] -> IO MangoValue
 _eval ctx argv = mapM (eval ctx) argv >>= evalMany ctx
 
+_if :: Scope -> [MangoValue] -> IO MangoValue
+_if ctx argv = do
+    (cond,t,f)      <- expectArgs3 argv
+    evaluatedCond   <- eval ctx cond
+    case evaluatedCond of
+        MangoList []    -> eval ctx f
+        _               -> eval ctx t
+
 mkMathFunction :: (Double -> Double -> Double) -> MangoValue
 mkMathFunction op = MangoFunction $ \argv -> do
     (av, bv)    <- expectArgs2 argv
@@ -77,6 +85,7 @@ initPrelude = do
     insert "macro"  (MangoSpecial   macro)      globals
     insert "set"    (MangoSpecial   set)        globals
     insert "eval"   (MangoSpecial   _eval)      globals
+    insert "if"     (MangoSpecial   _if)        globals
     
     insert "+"      (mkMathFunction (+))        globals
     insert "-"      (mkMathFunction (-))        globals
