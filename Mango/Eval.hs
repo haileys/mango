@@ -1,6 +1,7 @@
 module Mango.Eval where
 
 import Mango.Value
+import Mango.Exception
 import Control.Monad
 import qualified Mango.MutableMap as M
 
@@ -17,7 +18,7 @@ eval ctx (MangoList     (x:xs)) = do
     case callee of
         MangoFunction fn    -> mapM (eval ctx) xs >>= fn
         MangoSpecial spec   -> spec ctx xs
-        _                   -> error $ "Attempted to call non-callable: " ++ show callee
+        _                   -> mangoError $ "Attempted to call non-callable: " ++ show callee
 
 eval ctx (MangoNumber   num)    = return $ MangoNumber num
 eval ctx (MangoSymbol   sym)    = getVar sym ctx
@@ -35,7 +36,7 @@ hasVar name (Scope parent vars) = do
         False ->    hasVar name parent
 
 getVar :: String -> Scope -> IO MangoValue
-getVar name RootScope           = error $ "Undefined variable '" ++ name ++ "'"
+getVar name RootScope           = mangoError $ "Undefined variable '" ++ name ++ "'"
 getVar name (Scope parent vars) = do
     val <- M.lookup name vars
     case val of

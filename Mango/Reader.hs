@@ -1,7 +1,8 @@
 module Mango.Reader where
 
-import Data.List
 import Mango.Value
+import Mango.Exception
+import Data.List
 import Control.Monad
 import Text.ParserCombinators.Parsec
 
@@ -56,6 +57,9 @@ readProgram = do
     eof
     return exprs
 
-read = parse readProgram
+read file src =
+    case parse readProgram file src of
+        Left err    -> mangoError $ "Syntax Error in " ++ (show err)
+        Right ast   -> ast
 
 readFile file = Mango.Reader.read file `liftM` Prelude.readFile file

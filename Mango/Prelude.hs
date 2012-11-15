@@ -3,6 +3,7 @@ module Mango.Prelude where
 import Mango.Helpers
 import Mango.Value
 import Mango.Eval
+import Mango.Exception
 import Mango.MutableMap (insert, fromList)
 
 car :: [MangoValue] -> IO MangoValue
@@ -30,7 +31,7 @@ lambda ctx argv = do
     argStrings      <- mapM expectSymbol argSymbols
     return $ MangoFunction $ \args -> do
         if length args /= length argStrings
-            then error $ "Expected " ++ show (length argStrings) ++ " arguments, received " ++ show (length args)
+            then mangoError $ "Expected " ++ show (length argStrings) ++ " arguments, received " ++ show (length args)
             else do
                 vars <- fromList (zip argStrings args)
                 evalMany (Scope ctx vars) exprs
@@ -42,7 +43,7 @@ macro ctx argv = do
     argStrings      <- mapM expectSymbol argSymbols
     return $ MangoSpecial $ \callerCtx -> \args -> do
         if length args /= length argStrings
-            then error $ "Expected " ++ show (length argStrings) ++ " arguments, received " ++ show (length args)
+            then mangoError $ "Expected " ++ show (length argStrings) ++ " arguments, received " ++ show (length args)
             else do
                 vars <- fromList (zip argStrings args)
                 evalMany (Scope ctx vars) exprs

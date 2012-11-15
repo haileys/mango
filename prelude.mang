@@ -1,0 +1,10 @@
+;; This is an extension of the prelude defined in Mango/Prelude.hs
+
+
+
+(set map (lambda (xs fn)
+    (if (null xs)
+        '()
+        (cons
+            (fn (car xs))
+            (cdr xs)))))
