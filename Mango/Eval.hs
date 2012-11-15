@@ -9,17 +9,14 @@ evalMany :: Scope -> [MangoValue] -> IO MangoValue
 evalMany _      []  = return $ MangoList []
 evalMany scope  xs  = last `liftM` mapM (eval scope) xs
 
+apply :: Scope -> [MangoValue] -> MangoValue -> IO MangoValue
+apply ctx args (MangoFunction    fn)    = mapM (eval ctx) args >>= fn
+apply ctx args (MangoSpecial     spec)  = spec ctx args
+apply ctx args x                        = mangoError $ "Can't apply " ++ show x
+
 eval :: Scope -> MangoValue -> IO MangoValue
-
 eval ctx (MangoList     [])     = return $ MangoList []
-
-eval ctx (MangoList     (x:xs)) = do
-    callee <- eval ctx x
-    case callee of
-        MangoFunction fn    -> mapM (eval ctx) xs >>= fn
-        MangoSpecial spec   -> spec ctx xs
-        _                   -> mangoError $ "Attempted to call non-callable: " ++ show callee
-
+eval ctx (MangoList     (x:xs)) = backtraceFrame ("application of " ++ show x) $ eval ctx x >>= apply ctx xs
 eval ctx (MangoNumber   num)    = return $ MangoNumber num
 eval ctx (MangoSymbol   sym)    = getVar sym ctx
 eval ctx (MangoFunction fn)     = return $ MangoFunction fn
