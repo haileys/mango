@@ -6,11 +6,12 @@ data Scope
     = RootScope
     | Scope { parent :: Scope, vars :: M.MutableMap String MangoValue }
 
-data MangoValue = MangoList [MangoValue]
-                | MangoNumber Double
-                | MangoSymbol String
+data MangoValue = MangoList     [MangoValue]
+                | MangoNumber   Double
+                | MangoSymbol   String
                 | MangoFunction ([MangoValue] -> IO MangoValue)
-                | MangoSpecial (Scope -> [MangoValue] -> IO MangoValue)
+                | MangoSpecial  (Scope -> [MangoValue] -> IO MangoValue)
+                | MangoQuote    MangoValue
 
 instance Show MangoValue where
     show (MangoList     xs)     = "(" ++ unwords (map show xs) ++ ")"
@@ -18,6 +19,7 @@ instance Show MangoValue where
     show (MangoSymbol   sym)    = sym
     show (MangoFunction fun)    = "<function>"
     show (MangoSpecial  spec)   = "<special>"
+    show (MangoQuote    val)    = '\'' : show val
 
 hasVar :: String -> Scope -> IO Bool
 hasVar name RootScope           = return False
