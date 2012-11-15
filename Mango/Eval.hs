@@ -15,12 +15,9 @@ eval ctx (MangoList     [])     = return $ MangoList []
 eval ctx (MangoList     (x:xs)) = do
     callee <- eval ctx x
     case callee of
-        MangoFunction fn -> do
-            args <- mapM (eval ctx) xs
-            fn args
-        MangoSpecial spec -> do
-            spec ctx xs
-        x -> error $ "Attempted to call non-callable: " ++ show x
+        MangoFunction fn    -> mapM (eval ctx) xs >>= fn
+        MangoSpecial spec   -> spec ctx xs
+        _                   -> error $ "Attempted to call non-callable: " ++ show callee
 
 eval ctx (MangoNumber   num)    = return $ MangoNumber num
 eval ctx (MangoSymbol   sym)    = getVar sym ctx
