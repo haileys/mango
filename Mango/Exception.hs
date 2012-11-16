@@ -14,7 +14,7 @@ import Prelude hiding (catch)
 newtype Backtrace = Backtrace [String]
 
 instance Show Backtrace where
-    show (Backtrace xs) = unlines $ map ("  at " ++) xs
+    show (Backtrace xs) = unlines $ reverse $ map ("  at " ++) xs
 
 data MangoException
     = MangoException String Backtrace
