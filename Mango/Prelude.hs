@@ -1,5 +1,6 @@
 module Mango.Prelude where
 
+import Control.Monad
 import Mango.Helpers
 import Mango.Value
 import Mango.Eval
@@ -73,6 +74,11 @@ _print argv = do
             _               -> print val
     return $ MangoTrue
 
+gets :: [MangoValue] -> IO MangoValue
+gets argv = do
+    expectArgs0 argv
+    MangoString `liftM` getLine
+
 eq :: [MangoValue] -> IO MangoValue
 eq argv = do
     (a,b)   <- expectArgs2 argv
@@ -100,6 +106,7 @@ initPrelude = do
     insert "if"     (MangoSpecial   _if)        globals
     insert "#t"     MangoTrue                   globals
     insert "print"  (MangoFunction  _print)     globals
+    insert "gets"   (MangoFunction  gets)       globals
     insert "="      (MangoFunction  eq)         globals
     
     insert "+"      (mkMathFunction (+))        globals
