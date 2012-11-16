@@ -78,12 +78,12 @@ eq argv = do
     (a,b)   <- expectArgs2 argv
     return $ fromBool $ a == b
 
-mkMathFunction :: (Double -> Double -> Double) -> MangoValue
+mkMathFunction :: ToMango a => (Double -> Double -> a) -> MangoValue
 mkMathFunction op = MangoFunction $ \argv -> do
     (av, bv)    <- expectArgs2 argv
     a           <- expectNumber av
     b           <- expectNumber bv
-    return $ MangoNumber $ a `op` b
+    return $ toMango $ a `op` b
 
 initPrelude :: IO Scope
 initPrelude = do
@@ -107,5 +107,7 @@ initPrelude = do
     insert "*"      (mkMathFunction (*))        globals
     insert "/"      (mkMathFunction (/))        globals
     insert "**"     (mkMathFunction (**))       globals
+    insert "<"      (mkMathFunction (<))        globals
+    insert ">"      (mkMathFunction (>))        globals
     
     return $ Scope RootScope globals
