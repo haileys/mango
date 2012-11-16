@@ -19,6 +19,18 @@ cdr argv = do
     (_:xs)  <- expectList   list
     return $ MangoList xs
 
+_null :: [MangoValue] -> IO MangoValue
+_null argv = do
+    (list)  <- expectArgs1  argv
+    xs      <- expectList   list
+    return $ fromBool $ null xs
+
+cons :: [MangoValue] -> IO MangoValue
+cons argv = do
+    (car,cdr)   <- expectArgs2  argv
+    xs          <- expectList   cdr
+    return $ MangoList $ car:xs
+
 quote :: Scope -> [MangoValue] -> IO MangoValue
 quote _ argv = return $ MangoList argv
 
@@ -97,6 +109,8 @@ initPrelude = do
     
     insert "car"    (MangoFunction  car)        globals
     insert "cdr"    (MangoFunction  cdr)        globals
+    insert "null"   (MangoFunction  _null)      globals
+    insert "cons"   (MangoFunction  cons)       globals
     insert "list"   (MangoFunction  list)       globals
     insert "quote"  (MangoSpecial   quote)      globals
     insert "lambda" (MangoSpecial   lambda)     globals
