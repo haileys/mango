@@ -7,4 +7,4 @@
         '()
         (cons
             (fn (car xs))
-            (cdr xs)))))
+            (map (cdr xs) fn)))))
