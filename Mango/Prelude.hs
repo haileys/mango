@@ -73,6 +73,11 @@ _print argv = do
             _               -> print val
     return $ MangoTrue
 
+eq :: [MangoValue] -> IO MangoValue
+eq argv = do
+    (a,b)   <- expectArgs2 argv
+    return $ fromBool $ a == b
+
 mkMathFunction :: (Double -> Double -> Double) -> MangoValue
 mkMathFunction op = MangoFunction $ \argv -> do
     (av, bv)    <- expectArgs2 argv
@@ -95,6 +100,7 @@ initPrelude = do
     insert "if"     (MangoSpecial   _if)        globals
     insert "#t"     MangoTrue                   globals
     insert "print"  (MangoFunction  _print)     globals
+    insert "="      (MangoFunction  eq)         globals
     
     insert "+"      (mkMathFunction (+))        globals
     insert "-"      (mkMathFunction (-))        globals
