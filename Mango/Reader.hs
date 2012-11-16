@@ -27,7 +27,7 @@ readNumber :: Parser MangoValue
 readNumber = do
     whole <- many1 digit
     ignored
-    return $ MangoNumber $ (Prelude.read whole :: Double)
+    return $ MangoNumber $ Prelude.read whole
 
 readSexp :: Parser MangoValue
 readSexp = do
