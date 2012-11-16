@@ -37,6 +37,15 @@ instance Eq MangoValue where
     (==) MangoTrue          MangoTrue           = True
     (==) _                  _                   = False
 
+class ToMango a where
+    toMango :: a -> MangoValue
+
+instance ToMango Double where
+    toMango = MangoNumber
+
+instance ToMango Bool where
+    toMango = fromBool
+
 isTruthy :: MangoValue -> Bool
 isTruthy (MangoList []) = False
 isTruthy _              = True
