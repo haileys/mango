@@ -8,9 +8,10 @@ import Mango.Prelude
 import Mango.Exception
 import Data.Map (fromList)
 
-protect comp = do
-    catchMangoError print comp
+protect :: IO a -> IO ()
+protect = catchMangoError print . void
 
+replLine :: Scope -> IO ()
 replLine scope = do
     putStr ">> "
     hFlush stdout
@@ -27,13 +28,15 @@ banner =
     "                           __/ |       \n" ++
     "                          |___/        "
 
+repl :: Scope -> IO ()
 repl scope = do
     putStrLn banner
     forever $ replLine scope
 
-run scope (source:argv) = protect $ do
-    void $ R.readFile source >>= evalMany scope
+run :: Scope -> [String] -> IO ()
+run scope (source:argv) = protect $ R.readFile source >>= evalMany scope
 
+createGlobalScope :: IO Scope
 createGlobalScope = do
     globalScope <- initPrelude
     exprs <- R.readFile "prelude.mang"
