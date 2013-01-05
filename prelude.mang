@@ -1,5 +1,7 @@
 ;; This is an extension of the prelude defined in Mango/Prelude.hs
 
+(set #f '())
+
 (set reverse (lambda (xs)
     (set reverse-iter (lambda (xs ys)
         (if (null xs)
@@ -22,3 +24,59 @@
 
 (set foldr (lambda (xs init fn)
     (foldl (reverse xs) init fn)))
+
+(set all? (lambda (xs fn)
+    (if (null xs)
+        #t
+        (if (fn (car xs))
+            (all? (cdr xs) fn)
+            #f))))
+
+(set not (lambda (x)
+    (if x #f #t)))
+
+(set any? (lambda (xs fn)
+    (not (all? xs (lambda (x) (not (fn x)))))))
+
+(set caar (lambda (xs)
+    (car (car xs))))
+
+(set cddr (lambda (xs)
+    (cdr (cdr xs))))
+
+(set cadr (lambda (xs)
+    (car (cdr xs))))
+
+(set cdar (lambda (xs)
+    (cdr (car xs))))
+
+(set first (lambda (xs fn)
+    (if (null xs)
+        #f
+        (if (fn (car xs))
+            (car xs)
+            (first (cdr xs) fn)))))
+
+(set find (lambda (xs k fn)
+    (first xs (lambda (x) (= x k)))))
+
+(set assocl (lambda (lut k)
+    (find lut k car)))
+
+(set last (lambda (xs)
+    (foldl xs #f (lambda (a b) b))))
+
+(set assocr (lambda (lut k)
+    (find lut k last)))
+
+(set drop (lambda (xs n)
+    (if (= n 0)
+        xs
+        (drop (cdr xs) (- n 1)))))
+
+(set take (lambda (xs n)
+    (set take-iter (lambda (xs n ys)
+        (if (= n 0)
+            ys
+            (take-iter (cdr xs) (- n 1) (cons (car xs) ys)))))
+    (reverse (take-iter xs n '()))))
