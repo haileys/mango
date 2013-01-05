@@ -1,6 +1,11 @@
 ;; This is an extension of the prelude defined in Mango/Prelude.hs
 
-
+(set reverse (lambda (xs)
+    (set reverse-iter (lambda (xs ys)
+        (if (null xs)
+            ys
+            (reverse-iter (cdr xs) (cons (car xs) ys)))))
+    (reverse-iter xs '())))
 
 (set map (lambda (xs fn)
     (if (null xs)
@@ -8,3 +13,12 @@
         (cons
             (fn (car xs))
             (map (cdr xs) fn)))))
+
+
+(set foldl (lambda (xs init fn)
+    (if (null xs)
+        init
+        (foldl (cdr xs) (fn init (car xs)) fn))))
+
+(set foldr (lambda (xs init fn)
+    (foldl (reverse xs) init fn)))
