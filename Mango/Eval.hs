@@ -23,7 +23,16 @@ eval ctx (MangoString   str)    = return $ MangoString str
 eval ctx (MangoFunction fn)     = return $ MangoFunction fn
 eval ctx (MangoSpecial  spec)   = return $ MangoSpecial spec
 eval ctx (MangoQuote    val)    = return val
+eval ctx (MangoQuasi    val)    = quasi ctx val
+eval ctx (MangoUnquote  val)    = eval ctx val
 eval ctx MangoTrue              = return MangoTrue
+
+quasi :: Scope -> MangoValue -> IO MangoValue
+quasi ctx (MangoList    xs)     = MangoList `liftM` mapM (quasi ctx) xs
+quasi ctx (MangoQuote   val)    = return val
+quasi ctx (MangoQuasi   val)    = quasi ctx val
+quasi ctx (MangoUnquote val)    = eval ctx val
+quasi ctx x                     = return x
 
 hasVar :: String -> Scope -> IO Bool
 hasVar name RootScope           = return False

@@ -44,6 +44,18 @@ readQuote = do
     expr <- readExpr
     return $ MangoQuote expr
 
+readQuasi :: Parser MangoValue
+readQuasi = do
+    char '`'
+    expr <- readExpr
+    return $ MangoQuasi expr
+
+readUnquote :: Parser MangoValue
+readUnquote = do
+    char ','
+    expr <- readExpr
+    return $ MangoUnquote expr
+
 escapedStringChar = do
     char '\\'
     c <- anyToken
@@ -69,7 +81,13 @@ readString = do
 
 readExpr :: Parser MangoValue
 readExpr = do
-    expr <- readSymbol <|> readNumber <|> readSexp <|> readQuote <|> readString
+    expr <- readSymbol
+        <|> readNumber
+        <|> readSexp
+        <|> readQuote
+        <|> readQuasi
+        <|> readUnquote
+        <|> readString
     ignored
     return expr
 

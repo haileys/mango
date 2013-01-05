@@ -13,6 +13,8 @@ data MangoValue = MangoList     [MangoValue]
                 | MangoFunction ([MangoValue] -> IO MangoValue)
                 | MangoSpecial  (Scope -> [MangoValue] -> IO MangoValue)
                 | MangoQuote    MangoValue
+                | MangoQuasi    MangoValue
+                | MangoUnquote  MangoValue
                 | MangoTrue
 
 instance Show MangoValue where
@@ -23,6 +25,8 @@ instance Show MangoValue where
     show (MangoFunction fun)    = "<function>"
     show (MangoSpecial  spec)   = "<special>"
     show (MangoQuote    val)    = '\'' : show val
+    show (MangoQuasi    val)    = '`' : show val
+    show (MangoUnquote  val)    = ',' : show val
     show MangoTrue              = "#t"
 
 instance Eq MangoValue where
@@ -30,9 +34,9 @@ instance Eq MangoValue where
     (==) (MangoNumber   a)  (MangoNumber    b)  = a == b
     (==) (MangoSymbol   a)  (MangoSymbol    b)  = a == b
     (==) (MangoString   a)  (MangoString    b)  = a == b
-    -- functions in haskell are not instances of Eq so we can't check equality
     (==) (MangoFunction _)  (MangoFunction  _)  = False
     (==) (MangoSpecial  _)  (MangoSpecial   _)  = False
+    (==) (MangoQuasi    a)  (MangoQuasi     b)  = a == b
     (==) (MangoQuote    a)  (MangoQuote     b)  = a == b
     (==) MangoTrue          MangoTrue           = True
     (==) _                  _                   = False
