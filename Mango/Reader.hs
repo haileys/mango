@@ -21,7 +21,7 @@ readSymbol = do
         r <- many (firstAllowed <|> digit)
         ignored
         return $ MangoSymbol (f:r)
-    where firstAllowed = oneOf "+-*/#<>=" <|> letter
+    where firstAllowed = oneOf "+-*/#<>=?" <|> letter
 
 readNumber :: Parser MangoValue
 readNumber = do
